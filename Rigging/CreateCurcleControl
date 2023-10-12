@@ -1,0 +1,26 @@
+import maya.cmds as cmds
+
+targetJoint = cmds.ls(selection=True)
+
+controlName = targetJoint[0] + '_ctrl'
+offsetGrpName = controlName + '_offset'
+
+cmds.circle(nr=(0,0,1), c=(0, 0, 0), r=6, n=controlName)
+
+cmds.group(controlName, n=offsetGrpName)
+
+cmds.select(targetJoint[0])
+mel.eval('jointOrientToggleAxesVisibility')
+
+cmds.matchTransform(offsetGrpName, targetJoint[0])
+
+cmds.parentConstraint(targetJoint[0], offsetGrpName, mo=False, n=targetJoint[0]+'_temp_constraint')
+
+cmds.setAttr(controlName + '.rotateY', 90)
+
+cmds.select(controlName)
+cmds.makeIdentity(apply=True, t=1, r=1, s=1, n=0)
+
+cmds.delete(targetJoint[0]+'_temp_constraint')
+
+cmds.parentConstraint(controlName, targetJoint[0], mo=False, n=targetJoint[0]+'_ctrl_constraint')
